@@ -5,69 +5,73 @@ package BOJ;
 import java.util.*;
 
 class Board {
-    private Object redBall, blueBall, hole;
-    char[][] board;
-
+    private final int INF = 987654321;
     // left, up, right, down
-    final int[] dx = {-1, 0, 1, 0};
-    final int[] dy = {0, -1, 0, 1};
+    private final int[] dx = {-1, 0, 1, 0};
+    private final int[] dy = {0, -1, 0, 1};
+    private enum DIR {LEFT, UP, RIGHT, DOWN}
 
-    int ret = 987654321;
+    private final char[][] board;
+    private int holeX, holeY;
+    private Ball initialRedBall, initialBlueBall;
+    private Ball redBall, blueBall;
+    private int ret;
 
-    // 공이나 구멍
-    class Object {
+    // 공
+    class Ball {
         public int x, y;
 
-        public Object(int x, int y) {
+        public Ball(int x, int y) {
             this.x = x;
             this.y = y;
         }
 
-        public Object(Object copy) {
+        public Ball(Ball copy) {
             this.x = copy.x;
             this.y = copy.y;
         }
 
-        public boolean equals(Object comp) {
-            if (this.x != comp.x) return false;
-            if (this.y != comp.y) return false;
-            return true;
+        public boolean equals(Ball comp) {
+            return this.x == comp.x && this.y == comp.y;
         }
 
-        // '.'이 아닌 블록을 만나기 전까지 이동
-        public void move(int dir) {
-            char item = board[this.y][this.x];
-            board[this.y][this.x] = '.';
+        public boolean isOut() {
+            return this.x == holeX && this.y == holeY;
+        }
 
-            while(0 < this.x && this.x < board.length && 0 < this.y && this.y < board.length - 1) {
-                int nextY = this.y + dy[dir];
-                int nextX = this.x + dx[dir];
+        // '.'이 아닌 블록을 만나기 전까지 dir 방향으로 이동
+        public void go(DIR dir) {
+            while (0 < this.y && this.y < board.length - 1 && 0 < this.x && this.x < board[0].length - 1) {
+                int nextY = this.y + dy[dir.ordinal()];
+                int nextX = this.x + dx[dir.ordinal()];
                 char nextItem = board[nextY][nextX];
-                if(nextItem != '.'){
-                    if(nextItem == 'O') {
-                        this.x = nextX;
-                        this.y = nextY;
-                    }
-                    break;
-                }
-                else {
+
+                if (nextItem == 'O') { // 구멍에 도착한 경우 구멍으로 이동
                     this.x = nextX;
                     this.y = nextY;
+                    break;
                 }
-            }
 
-            board[this.y][this.x] = item;
+                // 다른 공이나 벽이랑 부딪치는 경우 바로 앞 칸에서 stop
+                if(this == redBall) {
+                    if (nextY == blueBall.y && nextX == blueBall.x) break;
+                }
+                if(this == blueBall) {
+                    if (nextY == redBall.y && nextX == redBall.x) break;
+                }
+                if(nextItem == '#') break;
+
+                // 일반적으로 직진하는 경우
+                this.x = nextX;
+                this.y = nextY;
+            }
         }
 
-        public void moveToPosition(Object dest) {
-            char item = board[this.y][this.x];
-            board[this.y][this.x] = '.';
-            this.x = dest.x;
-            this.y = dest.y;
-            board[this.y][this.x] = item;
+        public void restorePosition(Ball origin) {
+            this.x = origin.x;
+            this.y = origin.y;
         }
     }
-
 
     public Board(String[] board) {
         this.board = new char[board.length][board[0].length()];
@@ -75,99 +79,117 @@ class Board {
             for (int x = 0; x < board[0].length(); x++) {
                 this.board[y][x] = board[y].charAt(x);
                 switch (this.board[y][x]) {
-                    case 'B' -> blueBall = new Object(x, y);
-                    case 'R' -> redBall = new Object(x, y);
-                    case 'O' -> hole = new Object(x, y);
+                    case 'B':
+                        initialBlueBall = new Ball(x, y);
+                        this.board[y][x] = '.';
+                        break;
+                    case 'R' :
+                        initialRedBall = new Ball(x, y);
+                        this.board[y][x] = '.';
+                        break;
+                    case 'O' :
+                        this.holeY = y;
+                        this.holeX = x;
+                        break;
+                    default:
+                        break;
                 }
             }
         }
     }
 
-    // 이전에 위쪽으로 움직였던 경우에는 다시 아래쪽으로 움직일 필요는 없는듯.
-    // 다른 방향들도 마찬가지
-
-    // 빨간 공이랑 파란 공이랑 같은 줄에 있는 경우 예외처리
-    // 더 옆에 있는 공부터 먼저 움직여야 한다.
-
-    // x값 감소
-    public void moveLeft() {
-        if (redBall.y == blueBall.y && redBall.x < blueBall.x) {
-            redBall.move(0);
-            blueBall.move(0);
-        } else {
-            blueBall.move(0);
-            redBall.move(0);
+    // 이전에 움직였던 방향의 반대 방향으로 움직일 필요는 없다
+    // 빨간 공이랑 파란 공이랑 같은 줄에 있는 경우, 더 옆에 있는 공부터 먼저 움직여야 한다.
+    public void tilt(DIR dir) {
+        switch(dir.ordinal()) {
+            case 0: // LEFT, x값 감소
+                if (redBall.y == blueBall.y && redBall.x < blueBall.x) {
+                    redBall.go(DIR.LEFT);
+                    blueBall.go(DIR.LEFT);
+                } else {
+                    blueBall.go(DIR.LEFT);
+                    redBall.go(DIR.LEFT);
+                }
+                break;
+            case 1: // UP, y값 감소
+                if (redBall.x == blueBall.x && redBall.y < blueBall.y) {
+                    redBall.go(DIR.UP);
+                    blueBall.go(DIR.UP);
+                } else {
+                    blueBall.go(DIR.UP);
+                    redBall.go(DIR.UP);
+                }
+                break;
+            case 2: // RIGHT, x값 증가
+                if (redBall.y == blueBall.y && redBall.x > blueBall.x) {
+                    redBall.go(DIR.RIGHT);
+                    blueBall.go(DIR.RIGHT);
+                } else {
+                    blueBall.go(DIR.RIGHT);
+                    redBall.go(DIR.RIGHT);
+                }
+                break;
+            case 3: // DOWN, y값 증가
+                if (redBall.x == blueBall.x && redBall.y > blueBall.y) {
+                    redBall.go(DIR.DOWN);
+                    blueBall.go(DIR.DOWN);
+                } else {
+                    blueBall.go(DIR.DOWN);
+                    redBall.go(DIR.DOWN);
+                }
+                break;
+            default:
+                break;
         }
     }
 
-    // y값 감소
-    public void moveUp() {
-        if (redBall.x == blueBall.x && redBall.y < blueBall.y) {
-            redBall.move(1);
-            blueBall.move(1);
-        } else {
-            blueBall.move(1);
-            redBall.move(1);
+    // 디버깅을 위해 전체 board 출력
+    public void printBoard() {
+        for (int y = 0; y < board.length; y++) {
+            for (int x = 0; x < board[0].length; x++) {
+                if(redBall.x == x && redBall.y == y) System.out.print('R');
+                else if(blueBall.x == x && blueBall.y == y) System.out.print('B');
+                else System.out.print(board[y][x]);
+            }
+            System.out.println();
         }
     }
 
-    // x값 증가
-    public void moveRight() {
-        if (redBall.y == blueBall.y && redBall.x > blueBall.x) {
-            redBall.move(2);
-            blueBall.move(2);
-        } else {
-            blueBall.move(2);
-            redBall.move(2);
-        }
-    }
-
-    // y값 증가
-    public void moveDown() {
-        if (redBall.x == blueBall.x && redBall.y > blueBall.y) {
-            redBall.move(3);
-            blueBall.move(3);
-        } else {
-            blueBall.move(3);
-            redBall.move(3);
-        }
-    }
-
-    public void move(Object prevRedBall, Object prevBlueBall, int time) {
+    public void play(int time) {
         if (time > 10) {
             return;
         }
-        if (prevBlueBall.equals(hole)) {
+
+        if (blueBall.isOut()) {
             return;
-        } else if (prevRedBall.equals(hole)) {
+        } else if (redBall.isOut()) {
             ret = Math.min(ret, time);
             return;
         }
 
-        moveUp();
-        move(redBall, blueBall, time + 1);
-        redBall.moveToPosition(prevRedBall);
-        blueBall.moveToPosition(prevBlueBall);
+        Ball prevRedBall = new Ball(redBall);
+        Ball prevBlueBall = new Ball(blueBall);
 
-        moveDown();
-        move(redBall, blueBall, time + 1);
-        redBall.moveToPosition(prevRedBall);
-        blueBall.moveToPosition(prevBlueBall);
+        for(DIR dir : DIR.values()) {
+            tilt(dir);
 
-        moveLeft();
-        move(redBall, blueBall, time + 1);
-        redBall.moveToPosition(prevRedBall);
-        blueBall.moveToPosition(prevBlueBall);
+//            System.out.println((time + 1) + "time " + dir.name());
+//            printBoard();
+//            System.out.println();
 
-        moveRight();
-        move(redBall, blueBall, time + 1);
-        redBall.moveToPosition(prevRedBall);
-        blueBall.moveToPosition(prevBlueBall);
+            play(time + 1);
+            redBall.restorePosition(prevRedBall);
+            blueBall.restorePosition(prevBlueBall);
+        }
     }
 
-    public int minMoveToPopUpOnlyRedBall() {
-        move(redBall, blueBall, 0);
-        return ret == 987654321 ? -1 : ret; // ret값이 변하지 않았으면 -1 리턴
+    public int minMoveToOutOnlyRedBall() {
+        redBall = new Ball(initialRedBall);
+        blueBall = new Ball(initialBlueBall);
+        ret = INF;
+
+        play(0);
+        return ret == INF ? -1 : ret;
     }
 }
 
@@ -183,6 +205,6 @@ public class BOJ_13460 {
         }
 
         Board B = new Board(board);
-        System.out.println(B.minMoveToPopUpOnlyRedBall());
+        System.out.println(B.minMoveToOutOnlyRedBall());
     }
 }
