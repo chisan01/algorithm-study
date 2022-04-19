@@ -1,7 +1,7 @@
 package BOJ;
 
-// 백준 골드1 구슬 탈출 2
-
+import java.io.*;
+import java.nio.Buffer;
 import java.util.*;
 
 class Board {
@@ -16,6 +16,7 @@ class Board {
     private int holeX, holeY;
     private Ball initialRedBall, initialBlueBall;
     private Ball redBall, blueBall;
+    private int ret;
 
     // 공
     class Ball {
@@ -31,6 +32,10 @@ class Board {
             this.y = copy.y;
         }
 
+        public boolean equals(Ball comp) {
+            return this.x == comp.x && this.y == comp.y;
+        }
+
         public boolean isOut() {
             return this.x == holeX && this.y == holeY;
         }
@@ -42,8 +47,7 @@ class Board {
                 int nextX = this.x + dx[dir.ordinal()];
                 char nextItem = board[nextY][nextX];
 
-                // 구멍에 도착한 경우 구멍으로 이동
-                if (nextItem == 'O') {
+                if (nextItem == 'O') { // 구멍에 도착한 경우 구멍으로 이동
                     this.x = nextX;
                     this.y = nextY;
                     break;
@@ -67,18 +71,6 @@ class Board {
         public void restorePosition(Ball origin) {
             this.x = origin.x;
             this.y = origin.y;
-        }
-    }
-
-    class Balls {
-        public Ball redBall;
-        public Ball blueBall;
-        public int time;
-
-        public Balls(Ball redBall, Ball blueBall, int time) {
-            this.redBall = new Ball(redBall);
-            this.blueBall = new Ball(blueBall);
-            this.time = time;
         }
     }
 
@@ -107,7 +99,6 @@ class Board {
         }
     }
 
-    // 이전에 움직였던 방향의 반대 방향으로 움직일 필요는 없다
     // 빨간 공이랑 파란 공이랑 같은 줄에 있는 경우, 더 옆에 있는 공부터 먼저 움직여야 한다.
     public void tilt(DIR dir) {
         if ((dir == DIR.LEFT && redBall.y == blueBall.y && redBall.x < blueBall.x) ||
@@ -135,49 +126,57 @@ class Board {
         }
     }
 
-    public int minMoveToOutOnlyRedBall() {
-        Queue<Balls> Q = new LinkedList<>();
-        Q.add(new Balls(initialRedBall, initialBlueBall, 0));
-        while (!Q.isEmpty()) {
-            int curTime = Q.peek().time;
-            if (curTime > 10) break;
-            redBall = Q.peek().redBall;
-            blueBall = Q.peek().blueBall;
-            Q.poll();
-
-            if (blueBall.isOut()) continue;
-            else if (redBall.isOut()) {
-                return curTime;
-            }
-
-            Ball prevRedBall = new Ball(redBall);
-            Ball prevBlueBall = new Ball(blueBall);
-
-            for (DIR dir : DIR.values()) {
-                tilt(dir);
-
-//                System.out.println((curTime + 1) + "time " + dir.name());
-//                printBoard();
-//                System.out.println();
-
-                Q.add(new Balls(redBall, blueBall, curTime + 1));
-                redBall.restorePosition(prevRedBall);
-                blueBall.restorePosition(prevBlueBall);
-            }
+    public void play(int time, DIR prevDir) {
+        if (time > 10) {
+            return;
         }
-        return -1;
+
+        if (blueBall.isOut()) {
+            return;
+        } else if (redBall.isOut()) {
+            ret = Math.min(ret, time);
+            return;
+        }
+
+        Ball prevRedBall = new Ball(redBall);
+        Ball prevBlueBall = new Ball(blueBall);
+
+        for (DIR dir : DIR.values()) {
+            // 이전에 움직였던 방향의 반대 방향으로 움직일 필요는 없다
+            if ((prevDir == DIR.DOWN || prevDir == DIR.UP) && (dir == DIR.DOWN || dir == DIR.UP)) continue;
+            if ((prevDir == DIR.RIGHT || prevDir == DIR.LEFT) && (dir == DIR.RIGHT || dir == DIR.LEFT)) continue;
+            tilt(dir);
+
+//            System.out.println((time + 1) + "time " + dir.name());
+//            printBoard();
+//            System.out.println();
+
+            play(time + 1, dir);
+            redBall.restorePosition(prevRedBall);
+            blueBall.restorePosition(prevBlueBall);
+        }
+    }
+
+    public int minMoveToOutOnlyRedBall() {
+        redBall = new Ball(initialRedBall);
+        blueBall = new Ball(initialBlueBall);
+        ret = INF;
+
+        play(0, null);
+        return ret == INF ? -1 : ret;
     }
 }
 
 public class BOJ_13460 {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int M = sc.nextInt();
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine(), " ");
+        int N = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
 
         String[] board = new String[N];
         for (int i = 0; i < N; i++) {
-            board[i] = sc.next();
+            board[i] = br.readLine();
         }
 
         Board B = new Board(board);
