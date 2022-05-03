@@ -22,19 +22,9 @@ public class BOJ_1106 {
 
     int clientIncreaseGoal, numberOfCity;
     City[] cities;
-    int[] dp;
+    int[] minSpentMoney;
 
-    int func(int leftClientIncreaseGoal) {
-        // base case
-        if(leftClientIncreaseGoal <= 0) return 0;
-        if(dp[leftClientIncreaseGoal] != -1) return dp[leftClientIncreaseGoal];
-
-        int ret = 987654321;
-        for (City city : cities) {
-            ret = Math.min(ret, func(leftClientIncreaseGoal - city.customer) + city.price);
-        }
-        return dp[leftClientIncreaseGoal] = ret;
-    }
+    final int INF = 987654321;
 
     void solution() throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -50,10 +40,22 @@ public class BOJ_1106 {
             int customer = Integer.parseInt(st.nextToken());
             cities[i] = new City(customer, price);
         }
-        dp = new int[clientIncreaseGoal + 1];
-        Arrays.fill(dp, -1);
+        minSpentMoney = new int[clientIncreaseGoal + 1];
+        Arrays.fill(minSpentMoney, INF);
 
-        System.out.println(func(clientIncreaseGoal));
+        // base case
+        minSpentMoney[0] = 0;
+        for (int curNumberOfClients = 0; curNumberOfClients < clientIncreaseGoal; curNumberOfClients++) {
+            if(minSpentMoney[curNumberOfClients] == INF) continue;
+            for (City city : cities) {
+                int nextNumberOfClients = curNumberOfClients + city.customer;
+                if(nextNumberOfClients > clientIncreaseGoal) nextNumberOfClients = clientIncreaseGoal;
+
+                minSpentMoney[nextNumberOfClients] = Math.min(minSpentMoney[nextNumberOfClients], minSpentMoney[curNumberOfClients] + city.price);
+            }
+        }
+
+        System.out.println(minSpentMoney[clientIncreaseGoal]);
     }
 
     public static void main(String[] args) throws Exception {
