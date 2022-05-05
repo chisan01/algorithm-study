@@ -5,36 +5,59 @@ package BOJ;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class BOJ_2606 {
 
     int numberOfComputers;
     List<List<Integer>> computerConnections;
 
-    int virusCnt = 0;
-
     int[] visitedComputer;
 
-    void dfs(int curComputer) {
-        virusCnt++;
-        List<Integer> curComputerConnections = computerConnections.get(curComputer);
-        for (int connectedComputers : curComputerConnections) {
-            // 이미 방문한 경우
-            if(visitedComputer[connectedComputers] == 1) continue;
+    int dfs(int startComputer) {
+        int virusCnt = 0;
+        Stack<Integer> S = new Stack<>();
+        S.push(startComputer);
+        while (!S.isEmpty()) {
+            int curComputer = S.pop();
+            List<Integer> curComputerConnections = computerConnections.get(curComputer);
+            for (int connectedComputers : curComputerConnections) {
+                // 이미 방문한 경우
+                if(visitedComputer[connectedComputers] == 1) continue;
 
-            visitedComputer[connectedComputers] = 1;
-            dfs(connectedComputers);
+                virusCnt++;
+                visitedComputer[connectedComputers] = 1;
+                S.push(curComputer);
+                S.push(connectedComputers);
+                break;
+            }
         }
+        return virusCnt;
+    }
+
+    int bfs(int startComputer) {
+        int virusCnt = 0;
+        Queue<Integer> Q = new LinkedList<>();
+        Q.add(startComputer);
+        while (!Q.isEmpty()) {
+            int curComputer = Q.poll();
+            List<Integer> curComputerConnections = computerConnections.get(curComputer);
+            for (int connectedComputers : curComputerConnections) {
+                // 이미 방문한 경우
+                if(visitedComputer[connectedComputers] == 1) continue;
+
+                virusCnt++;
+                visitedComputer[connectedComputers] = 1;
+                Q.add(connectedComputers);
+            }
+        }
+        return virusCnt; // 1번 컴퓨터는 제외
     }
 
     void solution() throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         numberOfComputers = Integer.parseInt(br.readLine());
-        visitedComputer = new int[numberOfComputers];
         computerConnections = new ArrayList<>();
         for (int i = 0; i < numberOfComputers; i++) {
             computerConnections.add(new ArrayList<>());
@@ -52,10 +75,9 @@ public class BOJ_2606 {
             computerConnections.get(bComputer).add(aComputer);
         }
 
+        visitedComputer = new int[numberOfComputers];
         visitedComputer[0] = 1;
-        dfs(0);
-
-        System.out.println(virusCnt - 1); // 1번 컴퓨터는 제외
+        System.out.println(bfs(0));
     }
 
     public static void main(String[] args) throws Exception {
