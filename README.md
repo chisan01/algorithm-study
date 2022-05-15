@@ -168,7 +168,7 @@ $ git pull -r upstream main
   | 5주차 | 최단거리 알고리즘 | 최문형 | [백준] Gold4 [타임머신](https://www.acmicpc.net/problem/11657) | [백준] Silver3 [등수 매기기](https://www.acmicpc.net/problem/2012) |
   | 9주차 | Greedy & Brute Force 복습 | | [백준] Silver4 [게임을 만든 동준이](https://www.acmicpc.net/problem/2847) | [백준] Silver3 [퇴사](https://www.acmicpc.net/problem/14501) |
   | 10주차 | DFS & BFS | 이진영 | [백준] Silver3 [바이러스](https://www.acmicpc.net/problem/2606) | [백준] Silver2 [유기농 배추](https://www.acmicpc.net/problem/1012) |
-  | 11주차 | Binary Search | 풍혜림 | [백준] Silver4 [수 찾기](https://www.acmicpc.net/problem/1920) | [백준] Gold2 [가장 긴 증가하는 부분 수열 2] (https://www.acmicpc.net/problem/12015) |
+  | 11주차 | Binary Search | 풍혜림 | [백준] Silver4 [수 찾기](https://www.acmicpc.net/problem/1920) | [백준] Gold2 [가장 긴 증가하는 부분 수열 2](https://www.acmicpc.net/problem/12015) |
   |  |  |  |  |  |
   |  |  |  |  |  |
   |  |  |  |  |  |
