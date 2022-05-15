@@ -5,33 +5,27 @@ package BOJ;
 
 import java.util.*;
 import java.io.*;
+import java.util.stream.Collectors;
 
 public class BOJ_1920 {
 
     int N, M;
-    int[] arr, searchNumbers;
-
-    int search(int searchNumber, int startIndex, int endIndex) {
-        if(startIndex > endIndex) return 0;
-
-        int midIndex = (startIndex + endIndex) / 2;
-        if(arr[midIndex] == searchNumber) return 1;
-        else if(arr[midIndex] > searchNumber) return search(searchNumber, startIndex, midIndex - 1);
-        else return search(searchNumber, midIndex + 1, endIndex);
-    }
+    Set<Integer> set;
+    int[] searchNumbers;
 
     void solution() throws Exception {
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         N = Integer.parseInt(br.readLine());
-        arr = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).sorted().toArray();
+        set = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).boxed().collect(Collectors.toSet());
 
         M = Integer.parseInt(br.readLine());
         searchNumbers = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
 
         for (int searchNumber : searchNumbers) {
-            bw.write(Integer.toString(search(searchNumber, 0, arr.length - 1)) + "\n");
+            if(set.contains(searchNumber)) bw.write("1\n");
+            else bw.write("0\n");
         }
 
         bw.close();
