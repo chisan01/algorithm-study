@@ -149,7 +149,9 @@ $ git pull -r upstream main
   | 6주차 |  |  | [백준] Gold5 [돌 게임 6](https://www.acmicpc.net/problem/9660) | [백준] Silver1 [시간 관리](https://www.acmicpc.net/problem/1263) |
   | 9주차 | [백준] Gold 5 [호텔](https://www.acmicpc.net/problem/1106) | [백준] Silver 3 [스위치 켜고 끄기](https://www.acmicpc.net/problem/1244) |  |  |
   | 10주차 | [백준] Silver 3 [01타일](https://www.acmicpc.net/problem/1904) |  | [백준] Gold 5 [사다리 타기](https://www.acmicpc.net/problem/2469) |  |
-  | 11주차 | [백준] Silver 1 [나무 탈출](https://www.acmicpc.net/problem/15900) |  | [백준] Silver 2 [나무 자르기](https://www.acmicpc.net/problem/2805) |  |
+  | 11주차 |  | [백준] Silver 1 [나무 탈출](https://www.acmicpc.net/problem/15900) |  | [백준] Silver 2 [나무 자르기](https://www.acmicpc.net/problem/2805) |
+  | 12주차 |  |  |  |  |
+  | 13주차 |  |  |  |  |
   |  |  |  |  |  |
   |  |  |  |  |  |
   |  |  |  |  |  |
@@ -169,6 +171,8 @@ $ git pull -r upstream main
   | 9주차 | Greedy & Brute Force 복습 | | [백준] Silver4 [게임을 만든 동준이](https://www.acmicpc.net/problem/2847) | [백준] Silver3 [퇴사](https://www.acmicpc.net/problem/14501) |
   | 10주차 | DFS & BFS | 이진영 | [백준] Silver3 [바이러스](https://www.acmicpc.net/problem/2606) | [백준] Silver2 [유기농 배추](https://www.acmicpc.net/problem/1012) |
   | 11주차 | Binary Search | 풍혜림 | [백준] Silver4 [수 찾기](https://www.acmicpc.net/problem/1920) | [백준] Gold2 [가장 긴 증가하는 부분 수열 2](https://www.acmicpc.net/problem/12015) |
+  | 12주차 | Union Find 자료구조 | 안치산 | [백준] Gold4 [집합의 표현](https://www.acmicpc.net/problem/1717) | [백준] Gold4 [여행 가자](https://www.acmicpc.net/problem/1976) |
+  | 13주차 |  |  |  |  |
   |  |  |  |  |  |
   |  |  |  |  |  |
   |  |  |  |  |  |
