@@ -150,7 +150,7 @@ $ git pull -r upstream main
   | 9주차 | [백준] Gold 5 [호텔](https://www.acmicpc.net/problem/1106) | [백준] Silver 3 [스위치 켜고 끄기](https://www.acmicpc.net/problem/1244) |  |  |
   | 10주차 | [백준] Silver 3 [01타일](https://www.acmicpc.net/problem/1904) |  | [백준] Gold 5 [사다리 타기](https://www.acmicpc.net/problem/2469) |  |
   | 11주차 |  | [백준] Silver 1 [나무 탈출](https://www.acmicpc.net/problem/15900) |  | [백준] Silver 2 [나무 자르기](https://www.acmicpc.net/problem/2805) |
-  | 12주차 |  |  |  |  |
+  | 12주차 | [백준] Gold 5 [뱀과 사다리 게임](https://www.acmicpc.net/problem/16928) |  | [백준] Silver 2 [과자 나눠주기](https://www.acmicpc.net/problem/16401) |  |
   | 13주차 |  |  |  |  |
   |  |  |  |  |  |
   |  |  |  |  |  |
